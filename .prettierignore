@@ -1,0 +1,5 @@
+package.json
+package-lock.json
+*.min.js
+fonts.css
+google-fonts.css
