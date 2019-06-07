@@ -1,7 +1,6 @@
-import { ApolloServer, gql, IResolvers } from "apollo-server";
-
-import schema from "./schema";
-import UserService from "./domain/users";
+const { ApolloServer } = require("apollo-server");
+const schema = require("./schema");
+const UserService = require("./domain/users");
 
 function helloWorld() {
   console.log("HUHU");
@@ -9,11 +8,10 @@ function helloWorld() {
   return "Hello, World!";
 }
 
-const resolvers: IResolvers<{}, {}> = {
+const resolvers = {
   Query: {
     ping: helloWorld,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    users: async (_f, _x, context: any) => {}
+    users: async () => {}
   }
 };
 
