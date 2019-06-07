@@ -5,9 +5,9 @@
     "**/.settings": true,
     "**/.factorypath": true,
     "*.iml": true,
-    "yarn-error.log": true,
+    "**/yarn-error.log": true,
     "**/node_modules": true,
-    "yarn.lock": true,
+    "**/yarn.lock": true,
     ".gitattributes": true,
     ".gitignore": true,
     ".prettierignore": true

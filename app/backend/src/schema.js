@@ -87,6 +87,7 @@ module.exports = gql`
     """
     ping: String!
     users: [User!]!
+    user(id: ID!): User
 
     # Return an unordered list of all projects
     # Everyone can actually SEE any projects without
