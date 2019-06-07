@@ -88,13 +88,27 @@ class ProjectDBDataSource extends DataSource {
   }
 
   async getTasks(projectId, page, pageSize) {
-    const offset = page * pageSize;
-    const { rows } = await this.pool.query(
-      "SELECT * FROM tasks WHERE project_id = $1 ORDER BY id LIMIT $2 OFFSET $3",
-      [projectId, pageSize, offset]
-    );
+    const client = await this.pool.connect();
+    try {
+      const { rows: taskRows } = await this.pool.query(
+        "SELECT * FROM tasks WHERE project_id = $1 ORDER BY id LIMIT $2 OFFSET $3",
+        [projectId, pageSize, page * pageSize]
+      );
 
-    return rows.map(taskFromRow);
+      const { rows: countRows } = await this.pool.query(
+        "SELECT count(id) FROM tasks WHERE project_id = $1",
+        [projectId]
+      );
+
+      return {
+        tasks: taskRows.map(taskFromRow),
+        totalCount: countRows[0].count
+      };
+    } catch (e) {
+      console.error("ERROR", e);
+    } finally {
+      client.release();
+    }
   }
 }
 

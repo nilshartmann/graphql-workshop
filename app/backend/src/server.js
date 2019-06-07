@@ -39,19 +39,24 @@ const resolvers = {
     },
 
     tasks: async (project, { page = 0, pageSize = 10 }, { dataSources }) => {
-      const tasks = await dataSources.projectDatasource.getTasks(
+      const {
+        tasks,
+        totalCount
+      } = await dataSources.projectDatasource.getTasks(
         project.id,
         page,
         pageSize
       );
 
+      const totalPageCount = Math.ceil(totalCount / pageSize);
+
       return {
         page: {
-          page: 0,
-          totalCount: 666,
-          totalPageCount: 123,
-          hasNextPage: true,
-          hasPreviousPage: false
+          page,
+          totalCount,
+          totalPageCount,
+          hasNextPage: page < totalPageCount - 1,
+          hasPreviousPage: page > 0
         },
         nodes: tasks
       };
