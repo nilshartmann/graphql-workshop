@@ -8,11 +8,18 @@ const app = express();
 
 app.use(cors());
 
+// for debugging
+let usersRequestCounter = 0;
+let usersByIdCounter = 0;
+
 app.get("/users", (_, res) => {
   console.log("READING ALL USERS");
 
   // no caching here
-  res.json(users);
+  ++usersRequestCounter;
+  res.json(
+    users.map(u => ({ ...u, requestId: `users_${usersRequestCounter}` }))
+  );
 });
 app.get("/users/:userId", (req, res) => {
   console.log("READING USER WITH ID " + req.params.userId);
@@ -24,8 +31,9 @@ app.get("/users/:userId", (req, res) => {
   }
 
   // make apollo server cache the requests
+  ++usersByIdCounter;
   res.set("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
-  return res.json(user);
+  return res.json({ ...user, requestId: `usersById_${usersByIdCounter}` });
 });
 
 app.listen(port, () => {

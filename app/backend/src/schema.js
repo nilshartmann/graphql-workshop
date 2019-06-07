@@ -9,6 +9,11 @@ module.exports = gql`
 
     # The human readable name of the person
     name: String!
+
+    # For Debugging: a unique "id" that is generate inside the Userservice for each request
+    # Having this id one can verify if a resource comes from the apollo cache
+    # (that is requestId does not change) or if it actually (re-)fetched from the service
+    requestId: String!
   }
 
   type Project {
