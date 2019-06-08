@@ -13,16 +13,23 @@ let usersRequestCounter = 0;
 let usersByIdCounter = 0;
 
 app.get("/users", (_, res) => {
-  console.log("READING ALL USERS");
+  ++usersRequestCounter;
+  console.log(`READING ALL USERS (REQUEST-ID: ${usersRequestCounter})`);
 
   // no caching here
-  ++usersRequestCounter;
   res.json(
     users.map(u => ({ ...u, requestId: `users_${usersRequestCounter}` }))
   );
 });
+
 app.get("/users/:userId", (req, res) => {
-  console.log("READING USER WITH ID " + req.params.userId);
+  ++usersByIdCounter;
+  console.log(
+    `READING USER WITH ID '${
+      req.params.userId
+    }' (REQUEST-ID: ${usersByIdCounter})`
+  );
+
   const user = users.find(u => u.id === req.params.userId);
   if (!user) {
     return res
@@ -31,8 +38,7 @@ app.get("/users/:userId", (req, res) => {
   }
 
   // make apollo server cache the requests
-  ++usersByIdCounter;
-  res.set("Cache-Control", "public, max-age=31557600, s-maxage=31557600");
+  res.set("Cache-Control", "public, max-age=10, s-maxage=10");
   return res.json({ ...user, requestId: `usersById_${usersByIdCounter}` });
 });
 
