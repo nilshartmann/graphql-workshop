@@ -4,7 +4,7 @@ const UserService = require("./domain/users");
 const ProjectDBDataSource = require("./domain/project");
 
 function helloWorld() {
-  return "Hello, World!";
+  return "Hello, World! " + new Date().toLocaleTimeString();
 }
 
 const resolvers = {

@@ -90,7 +90,7 @@ module.exports = gql`
     """
     Returns hello world when the server is running
     """
-    ping: String!
+    ping: String! @cacheControl(maxAge: 25)
     users: [User!]!
     user(id: ID!): User
 
