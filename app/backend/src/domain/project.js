@@ -23,7 +23,13 @@ function projectFromRow(row) {
     // but we need them in the specialized resolvers
     // to load the 'real' objects
     _categoryId: row.category_id,
-    _ownerId: row.owner_id
+    _ownerId: row.owner_id,
+    category: row.category_name
+      ? {
+          name: row.category_name,
+          id: row.category_id
+        }
+      : undefined
   };
 }
 
@@ -46,8 +52,14 @@ class ProjectDBDataSource extends DataSource {
     // });
   }
 
-  async listAllProjects() {
-    const { rows } = await this.pool.query("SELECT * FROM projects");
+  async listAllProjects(options) {
+    console.log("listAllProjects", options);
+
+    const query = options.withCategory
+      ? "SELECT p.*, c.name as category_name FROM projects p, categories c WHERE p.category_id = c.id"
+      : "SELECT p.* FROM projects p";
+
+    const { rows } = await this.pool.query(query);
     return rows.map(projectFromRow);
   }
 

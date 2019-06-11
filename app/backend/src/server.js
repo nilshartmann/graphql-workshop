@@ -1,11 +1,39 @@
 const { ApolloServer } = require("apollo-server");
+const responseCachePlugin = require("apollo-server-plugin-response-cache");
+const graphqlFields = require("graphql-fields");
 const schema = require("./schema");
 const UserService = require("./domain/users");
 const ProjectDBDataSource = require("./domain/project");
 
-function helloWorld() {
-  return "Hello, World! " + new Date().toLocaleTimeString();
+function helloWorld(_source, _args, context, info) {
+  const result = "Hello, World! " + new Date().toLocaleTimeString();
+  console.log(result);
+  console.log("####### context", context);
+  console.log("####### info", info.operation);
+  return result;
 }
+
+// https://github.com/apollographql/apollo-server/issues/2128#issuecomment-449608218
+
+// other approach: https://www.npmjs.com/package/graphql-fields
+// recommended by lee bryon (https://github.com/graphql/graphql-js/issues/458#issuecomment-240017575)
+const makeFieldList = (fields, relationFields = [], f = {}, rootName) => {
+  for (let i = 0; i < fields.length; i++) {
+    const val = fields[i].name.value;
+
+    // A misc filter, you can remove this check
+    const newRoot = rootName ? `${rootName}.${val}` : val;
+    fields[i].selectionSet && relationFields.indexOf(newRoot) === -1
+      ? makeFieldList(
+          fields[i].selectionSet.selections,
+          relationFields,
+          f,
+          newRoot
+        )
+      : (f[newRoot] = 1);
+  }
+  return f;
+};
 
 const resolvers = {
   Query: {
@@ -19,8 +47,15 @@ const resolvers = {
       return dataSources.userservice.getUser(id);
     },
 
-    projects: async (_s, _a, { dataSources }) => {
-      return dataSources.projectDatasource.listAllProjects();
+    projects: async (_s, _a, { dataSources }, info) => {
+      const fields = graphqlFields(info, {}, { processArguments: true });
+
+      console.log(JSON.stringify(fields, null, 2));
+
+      // console.log("####### info", info);
+      return dataSources.projectDatasource.listAllProjects({
+        withCategory: !!fields.category
+      });
     },
 
     project: async (_s, { id }, { dataSources }) => {
@@ -34,6 +69,10 @@ const resolvers = {
       return dataSources.userservice.getUser(project._ownerId);
     },
     category: async (project, _, { dataSources }) => {
+      if (project.category) {
+        console.log("fyi: category already loaded!");
+        return project.category;
+      }
       // 1+n problem for fetching categories 😱
       return dataSources.projectDatasource.getCategoryById(project._categoryId);
     },
@@ -87,7 +126,8 @@ const server = new ApolloServer({
       userservice: new UserService(),
       projectDatasource: new ProjectDBDataSource()
     };
-  }
+  },
+  plugins: [responseCachePlugin()]
 });
 
 server.listen().then(({ url }) => {

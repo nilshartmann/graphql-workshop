@@ -1,6 +1,8 @@
 const { gql } = require("apollo-server");
 
 module.exports = gql`
+  directive @skipCache on FIELD | FRAGMENT_DEFINITION | FRAGMENT_SPREAD | INLINE_FRAGMENT | QUERY
+
   type User {
     id: ID!
 
@@ -90,7 +92,7 @@ module.exports = gql`
     """
     Returns hello world when the server is running
     """
-    ping: String! @cacheControl(maxAge: 25)
+    ping: String! # @cacheControl(maxAge: 3600)
     users: [User!]!
     user(id: ID!): User
 
@@ -98,7 +100,7 @@ module.exports = gql`
     # Everyone can actually SEE any projects without
     # being logged in. Only modifications to a project
     # (or Task) can be done when logged in
-    projects: [Project!]!
+    projects: [Project!]! @cacheControl(maxAge: 10)
 
     # Return the specified project
     project(id: ID!): Project
