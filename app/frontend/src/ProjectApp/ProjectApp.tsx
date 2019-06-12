@@ -1,0 +1,39 @@
+import * as React from "react";
+import styles from "./ProjectApp.module.scss";
+import AddTaskPage from "../AddTaskPage/AddTaskPage";
+import { Route, Switch } from "react-router";
+import ProjectsPage from "../ProjectsPage";
+import TasksPage from "../TasksPage";
+import { Link } from "react-router-dom";
+import { ApolloClient } from "apollo-client";
+import { withApollo } from "@apollo/react-hoc";
+import TaskPage from "../TaskPage/TaskPage";
+
+function Header() {
+  return (
+    <header className={styles.Header}>
+      <Link to={"/"}>Personal Project Planning</Link>
+    </header>
+  );
+}
+interface ProjectAppProps {
+  client: ApolloClient<any>;
+}
+
+export function ProjectApp({ client }: ProjectAppProps) {
+  return (
+    <div className={styles.ProjectApp}>
+      <Header />
+      <main>
+        <Switch>
+          <Route exact path={"/"} component={ProjectsPage} />
+          <Route exact path={"/project/:projectId/tasks"} component={TasksPage} />
+          <Route exact path={"/project/:projectId/tasks/:taskId"} component={TaskPage} />
+          <Route exact path={"/project/:projectId/addtaks"} component={AddTaskPage} />
+        </Switch>
+      </main>
+    </div>
+  );
+}
+
+export default withApollo<{}>(ProjectApp);

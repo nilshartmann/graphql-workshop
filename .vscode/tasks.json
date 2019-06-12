@@ -10,7 +10,7 @@
       "path": "app/userservice/",
       "problemMatcher": [],
       "presentation": {
-        "group": "services"
+        "group": "apps"
       }
     },
     {
@@ -20,12 +20,27 @@
       "path": "app/backend/",
       "problemMatcher": [],
       "presentation": {
-        "group": "services"
+        "group": "apps"
+      }
+    },
+    {
+      "label": "FRONTEND",
+      "type": "npm",
+      "script": "start",
+      "path": "app/frontend/",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "apps"
       }
     },
     {
       "label": "ALL SERVICES",
       "dependsOn": ["USERSERVICE", "BACKEND"],
+      "problemMatcher": []
+    },
+    {
+      "label": "ALL",
+      "dependsOn": ["ALL SERVICES", "FRONTEND"],
       "problemMatcher": []
     }
   ]
