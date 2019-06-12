@@ -2,7 +2,7 @@ import * as React from "react";
 import styles from "./TaskPage.module.scss";
 import { RouteComponentProps } from "react-router";
 import gql from "graphql-tag";
-import { TaskPageQuery, TaskPageQuery_project, TaskPageQueryVariables } from "../querytypes/TaskPageQuery";
+import { TaskPageQuery, TaskPageQuery_project, TaskPageQueryVariables } from "./querytypes/TaskPageQuery";
 import { Query } from "@apollo/react-components";
 import TaskView from "./TaskView";
 import TaskPageHeader from "./TaskPageHeader";

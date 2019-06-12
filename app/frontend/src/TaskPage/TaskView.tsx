@@ -1,4 +1,4 @@
-import { TaskPageQuery_project_task } from "../querytypes/TaskPageQuery";
+import { TaskPageQuery_project_task } from "./querytypes/TaskPageQuery";
 import Cardboard from "../components/Cardboard";
 import styles from "./TaskPage.module.scss";
 import Card, { InfoCard } from "../components/Card";

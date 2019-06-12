@@ -4,11 +4,11 @@ import styles from "./AddTaskPage.module.scss";
 import gql from "graphql-tag";
 import { Mutation, Query } from "@apollo/react-components";
 import { withApollo } from "@apollo/react-hoc";
-import { AddTaskPageQuery, AddTaskPageQueryVariables } from "../querytypes/AddTaskPageQuery";
+import { AddTaskPageQuery, AddTaskPageQueryVariables } from "./querytypes/AddTaskPageQuery";
 import { useNavigator } from "../infra/NavigationProvider";
 import { RouteComponentProps } from "react-router";
 import { AddTaskForm } from "./AddTaskForm";
-import { AddTaskMutation, AddTaskMutationVariables } from "../querytypes/AddTaskMutation";
+import { AddTaskMutation, AddTaskMutationVariables } from "./querytypes/AddTaskMutation";
 
 const ADD_TASK_PAGE_QUERY = gql`
   query AddTaskPageQuery($projectId: ID!) {

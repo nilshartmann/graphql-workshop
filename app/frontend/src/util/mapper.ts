@@ -1,4 +1,4 @@
-import { TaskState } from "../querytypes/global-query-types";
+import { TaskState } from "../global-query-types";
 
 export function mapTaskState(taskState: TaskState) {
   switch (taskState) {

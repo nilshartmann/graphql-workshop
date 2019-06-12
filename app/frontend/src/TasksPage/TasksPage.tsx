@@ -6,7 +6,7 @@ import * as React from "react";
 import { useNavigator } from "../infra/NavigationProvider";
 import gql from "graphql-tag";
 import { RouteComponentProps } from "react-router";
-import { TasksPageQuery, TasksPageQuery_project_taskList_tasks, TasksPageQueryVariables } from "../querytypes/TasksPageQuery";
+import { TasksPageQuery, TasksPageQuery_project_tasks, TasksPageQueryVariables } from "./querytypes/TasksPageQuery";
 import { Query } from "@apollo/react-components";
 import { mapTaskState } from "../util/mapper";
 
@@ -29,7 +29,7 @@ const TASKS_QUERY = gql`
 
 interface TasksPageTableProps {
   projectId: string;
-  tasks: TasksPageQuery_project_taskList_tasks[];
+  tasks: TasksPageQuery_project_tasks[];
 }
 function TasksTable({ projectId, tasks }: TasksPageTableProps) {
   const navigator = useNavigator();
@@ -92,7 +92,7 @@ export default function TasksPage(props: TasksPageProps) {
               <header>
                 <h1>{data.project.title} Tasks</h1>
               </header>
-              <TasksTable projectId={data.project.id} tasks={data.project.taskList.tasks} />
+              <TasksTable projectId={data.project.id} tasks={data.project.tasks} />
             </>
           );
         }}

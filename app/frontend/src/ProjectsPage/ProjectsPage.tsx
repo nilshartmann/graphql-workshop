@@ -3,7 +3,7 @@ import styles from "./ProjectsPage.module.scss";
 import NavButton from "../components/NavButton";
 import { useNavigator } from "../infra/NavigationProvider";
 import gql from "graphql-tag";
-import { ProjectsPageQuery, ProjectsPageQuery_projects } from "../querytypes/ProjectsPageQuery";
+import { ProjectsPageQuery, ProjectsPageQuery_projects } from "./querytypes/ProjectsPageQuery";
 import { Query } from "@apollo/react-components";
 
 const PROJECTS_PAGE_QUERY = gql`

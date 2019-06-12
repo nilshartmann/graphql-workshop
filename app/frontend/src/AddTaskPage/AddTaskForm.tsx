@@ -2,8 +2,8 @@ import * as React from "react";
 import { Form, Input, Select, TextArea } from "../components/form";
 import ButtonBar from "../components/ButtonBar";
 import Button from "../components/Button";
-import { AddTaskPageQuery_users } from "../querytypes/AddTaskPageQuery";
-import { AddTaskInput } from "../querytypes/global-query-types";
+import { AddTaskPageQuery_users } from "./querytypes/AddTaskPageQuery";
+import { AddTaskInput } from "../global-query-types";
 import moment from "moment";
 
 interface AddTaskFormProps {

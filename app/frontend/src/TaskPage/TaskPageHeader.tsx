@@ -1,4 +1,4 @@
-import { TaskPageQuery_project } from "../querytypes/TaskPageQuery";
+import { TaskPageQuery_project } from "./querytypes/TaskPageQuery";
 import { Link } from "react-router-dom";
 import * as React from "react";
 
