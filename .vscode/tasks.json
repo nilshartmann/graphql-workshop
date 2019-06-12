@@ -8,6 +8,24 @@
       "type": "npm",
       "script": "start",
       "path": "app/userservice/",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "test"
+      }
+    },
+    {
+      "label": "BACKEND",
+      "type": "npm",
+      "script": "start",
+      "path": "app/backend/",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "test"
+      }
+    },
+    {
+      "label": "ALL SERVICES",
+      "dependsOn": ["USERSERVICE", "BACKEND"],
       "problemMatcher": []
     }
   ]

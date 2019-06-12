@@ -4,7 +4,7 @@ services:
     image: postgres:11.3
     container_name: project_db
     ports:
-      - "9432:5432"
+      - "4432:5432"
     environment:
       - POSTGRES_PASSWORD=secretpw
       - POSTGRES_USER=klaus

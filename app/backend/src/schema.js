@@ -14,17 +14,18 @@ module.exports = gql`
 
     # For Debugging: a unique "id" that is generate inside the Userservice for each request
     # Having this id one can verify if a resource comes from the apollo cache
-    # (that is requestId does not change) or if it actually (re-)fetched from the service
+    # (that is requestId does not change) or if it's actually (re-)fetched from the service
     requestId: String!
   }
 
   type Project {
     id: ID!
 
-    # Give your project a simple, concise title
+    # A a simple, concise title for your project
     title: String!
 
-    # Describe your project in detail with as many words as you need
+    # A description of this project in deep detail so others can
+    # unterstand the goals and constraints of this project.
     description: String!
 
     # The project owner
@@ -34,11 +35,15 @@ module.exports = gql`
 
     # You split your Project into several tasks that you
     # have to work on to finish this Project's goal
-    tasks(page: Int, pageSize: Int): TaskConnection!
+    tasks: [Task!]!
 
+    # Get a task by it's unique id. Return null if that
+    # task could not be found
     task(id: ID!): Task
   }
 
+  # Projects are ground into user-defined categories
+  # (like 'Private', 'Business', 'Hobby',...)
   type Category {
     id: ID!
     name: String!
@@ -69,30 +74,14 @@ module.exports = gql`
     # Who works on this Task or should work on the task
     assignee: User!
 
-    # Your task always belongs to exactly one project
-    project: Project!
-
     toBeFinishedAt: String!
-  }
-
-  type PageResult {
-    page: Int!
-    totalCount: Int!
-    totalPageCount: Int!
-    hasNextPage: Boolean!
-    hasPreviousPage: Boolean!
-  }
-
-  type TaskConnection {
-    page: PageResult!
-    nodes: [Task!]!
   }
 
   type Query {
     """
     Returns hello world when the server is running
     """
-    ping: String! # @cacheControl(maxAge: 3600)
+    ping: String!
     users: [User!]!
     user(id: ID!): User
 
@@ -100,7 +89,7 @@ module.exports = gql`
     # Everyone can actually SEE any projects without
     # being logged in. Only modifications to a project
     # (or Task) can be done when logged in
-    projects: [Project!]! @cacheControl(maxAge: 10)
+    projects: [Project!]!
 
     # Return the specified project
     project(id: ID!): Project

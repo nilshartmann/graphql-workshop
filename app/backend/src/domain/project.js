@@ -29,19 +29,18 @@ function projectFromRow(row) {
           name: row.category_name,
           id: row.category_id
         }
-      : undefined
+      : undefined,
+    task: row.task_id ? taskFromRow(row, "task_") : undefined
   };
 }
 
 class ProjectDBDataSource extends DataSource {
+  constructor(config) {
+    super();
+    this.config = config;
+  }
   initialize(_config) {
-    this.pool = new Pool({
-      user: "klaus",
-      host: "localhost",
-      database: "project_db",
-      password: "secretpw",
-      port: 9432
-    });
+    this.pool = new Pool(this.config);
 
     this.pool.on("error", (error, _client) => {
       console.error("Error in PG Pool: ", error);
@@ -52,22 +51,18 @@ class ProjectDBDataSource extends DataSource {
     // });
   }
 
-  async listAllProjects(options) {
+  async listAllProjects(options = {}) {
     console.log("listAllProjects", options);
 
-    const query = options.withCategory
-      ? "SELECT p.*, c.name as category_name FROM projects p, categories c WHERE p.category_id = c.id"
-      : "SELECT p.* FROM projects p";
+    const query = buildProjectsQuery(options);
 
-    const { rows } = await this.pool.query(query);
+    const { rows } = await this.pool.query(...query);
     return rows.map(projectFromRow);
   }
 
-  async getProjectById(projectId) {
-    const { rows } = await this.pool.query(
-      "SELECT * FROM projects WHERE id = $1",
-      [projectId]
-    );
+  async getProjectById(projectId, options = {}) {
+    const query = buildProjectsQuery(options, projectId);
+    const { rows } = await this.pool.query(...query);
     if (rows.length === 0) {
       return null;
     }
@@ -99,42 +94,79 @@ class ProjectDBDataSource extends DataSource {
     return taskFromRow(rows[0]);
   }
 
-  async getTasks(projectId, page, pageSize) {
-    const client = await this.pool.connect();
-    try {
-      const { rows: taskRows } = await this.pool.query(
-        "SELECT * FROM tasks WHERE project_id = $1 ORDER BY id LIMIT $2 OFFSET $3",
-        [projectId, pageSize, page * pageSize]
-      );
+  async getTasks(projectId) {
+    const { rows: taskRows } = await this.pool.query(
+      "SELECT * FROM tasks WHERE project_id = $1",
+      [projectId]
+    );
 
-      const { rows: countRows } = await this.pool.query(
-        "SELECT count(id) FROM tasks WHERE project_id = $1",
-        [projectId]
-      );
-
-      return {
-        tasks: taskRows.map(taskFromRow),
-        totalCount: countRows[0].count
-      };
-    } catch (e) {
-      console.error("ERROR", e);
-    } finally {
-      client.release();
-    }
+    return taskRows.map(r => taskFromRow(r, ""));
   }
 }
 
-function taskFromRow(row) {
+function taskFromRow(row, prefix = "") {
   const STATES = ["NEW", "RUNNING", "FINISHED"];
-  return {
-    id: row.id,
-    title: row.title,
-    description: row.description,
-    state: STATES[row.state],
-    toBeFinishedAt: row.finish_date,
-    _assigneeId: row.assignee_id,
-    _projectId: row.project_id
+  const task = {
+    id: row[`${prefix}id`],
+    title: row[`${prefix}title`],
+    description: row[`${prefix}description`],
+    state: STATES[row[`${prefix}state`]],
+    toBeFinishedAt: row[`${prefix}finish_date`],
+    _assigneeId: row[`${prefix}assignee_id`]
   };
+
+  return task;
+}
+
+/** Build "optimized" Query using JOINs for a GraphQL request that selects
+ * 'task' and/or 'category' field.
+ *
+ * Note: selecting 'tasks' always requires a second SQL select. Would
+ * be possible to optimize this also here, but for demo purposes
+ * it's not neccessary
+ */
+function buildProjectsQuery(options, projectId) {
+  let selector = projectId ? "p.id=$1 AND " : "";
+  const values = projectId ? [projectId] : [];
+  if (options.withTask) {
+    const taskId = options.withTask.id;
+    if (projectId) {
+      selector += "t.id=$2 AND ";
+    } else {
+      selector += " t.id=$1 AND ";
+    }
+
+    values.push(taskId);
+  }
+
+  const TASK_FIELDS =
+    "t.id as task_id, t.title as task_title, t.description as task_description, t.state as task_state, t.finish_date as task_finish_date, t.assignee_id as task_assignee_id, t.project_id as task_project_id";
+  const CATEGORY_FIELDS = "c.name as category_name";
+
+  if (options.withCategory) {
+    if (options.withTask) {
+      return [
+        `SELECT p.*, ${TASK_FIELDS}, ${CATEGORY_FIELDS} FROM projects p, categories c, tasks t WHERE ${selector}p.category_id = c.id AND t.project_id = p.id`,
+        values
+      ];
+    }
+    return [
+      `SELECT p.*, ${CATEGORY_FIELDS} FROM projects p, categories c WHERE ${selector}p.category_id = c.id`,
+      values
+    ];
+  }
+
+  if (options.withTask) {
+    return [
+      `SELECT p.*, ${TASK_FIELDS} FROM projects p, tasks t WHERE ${selector} t.project_id = p.id`,
+      values
+    ];
+  }
+
+  return [
+    `SELECT p.* FROM projects p${projectId ? " WHERE p.id=$1" : ""}`,
+    values
+  ];
 }
 
 module.exports = ProjectDBDataSource;
