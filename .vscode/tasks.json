@@ -10,7 +10,7 @@
       "path": "app/userservice/",
       "problemMatcher": [],
       "presentation": {
-        "group": "test"
+        "group": "services"
       }
     },
     {
@@ -20,7 +20,7 @@
       "path": "app/backend/",
       "problemMatcher": [],
       "presentation": {
-        "group": "test"
+        "group": "services"
       }
     },
     {
