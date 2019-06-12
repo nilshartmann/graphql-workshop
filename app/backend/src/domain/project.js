@@ -102,6 +102,32 @@ class ProjectDBDataSource extends DataSource {
 
     return taskRows.map(r => taskFromRow(r, ""));
   }
+
+  async addTaskToProject(projectId, input) {
+    const client = await this.pool.connect();
+    try {
+      const seqResult = await client.query("SELECT nextval('task_id_seq')");
+
+      const newTaskId = seqResult.rows[0].nextval;
+      await client.query(
+        "INSERT INTO tasks (state, id, project_id, description, title, finish_date, assignee_id) VALUES (0, $1, $2, $3, $4, $5, $6)",
+        [
+          newTaskId,
+          projectId,
+          input.description,
+          input.title,
+          input.toBeFinishedAt,
+          input.assigneeId
+        ]
+      );
+
+      return this.getTaskById(newTaskId);
+    } catch (e) {
+      console.error("UPDATE FAILED: " + e, e);
+    } finally {
+      client.release();
+    }
+  }
 }
 
 function taskFromRow(row, prefix = "") {
@@ -111,7 +137,7 @@ function taskFromRow(row, prefix = "") {
     title: row[`${prefix}title`],
     description: row[`${prefix}description`],
     state: STATES[row[`${prefix}state`]],
-    toBeFinishedAt: row[`${prefix}finish_date`],
+    toBeFinishedAt: row[`${prefix}finish_date`].toISOString(),
     _assigneeId: row[`${prefix}assignee_id`]
   };
 

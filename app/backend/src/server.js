@@ -44,6 +44,15 @@ const resolvers = {
       });
     }
   },
+  Mutation: {
+    // addTask(projectId: ID!, input: AddTaskInput!): Task!
+    addTask: (_s, { projectId, input }, { dataSources }) => {
+      console.log("projectId:" + projectId);
+      console.log(input);
+
+      return dataSources.projectDatasource.addTaskToProject(projectId, input);
+    }
+  },
   Project: {
     owner: async (project, _, { dataSources }) => {
       // 1+n Problem when the query asks for more than one project 😱
