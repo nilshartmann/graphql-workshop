@@ -93,6 +93,12 @@ const server = new ApolloServer({
         port: 4432
       })
     };
+  },
+  playground: {
+    settings: {
+      "editor.theme": "light",
+      "schema.polling.enable": false
+    }
   }
 });
 
