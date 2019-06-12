@@ -16,6 +16,16 @@ function Header() {
     </header>
   );
 }
+
+function Footer() {
+  return (
+    <footer className={styles.Footer}>
+      <a href="https://github.com/nilshartmann/graphql-workshop" target="_blank">
+        https://github.com/nilshartmann/graphql-workshop
+      </a>
+    </footer>
+  );
+}
 interface ProjectAppProps {
   client: ApolloClient<any>;
 }
@@ -32,6 +42,7 @@ export function ProjectApp({ client }: ProjectAppProps) {
           <Route exact path={"/project/:projectId/addtaks"} component={AddTaskPage} />
         </Switch>
       </main>
+      <Footer />
     </div>
   );
 }
