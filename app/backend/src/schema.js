@@ -103,7 +103,12 @@ module.exports = gql`
   }
 
   type Mutation {
-    changeProjectTitle(id: ID, newTitle: String!): Project
     addTask(projectId: ID!, input: AddTaskInput!): Task!
+    updateTaskState(taskId: ID!, newState: TaskState): Task!
+  }
+
+  type Subscription {
+    onNewTask: Task!
+    onTaskChange(projectId: ID): Task!
   }
 `;

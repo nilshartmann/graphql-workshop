@@ -1,4 +1,4 @@
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer, PubSub, withFilter } = require("apollo-server");
 const graphqlFields = require("graphql-fields");
 const schema = require("./schema");
 const UserService = require("./domain/users");
@@ -7,6 +7,8 @@ const ProjectDBDataSource = require("./domain/project");
 function helloWorld(_source, _args) {
   return `Hello, World @ ${new Date().toLocaleTimeString()}`;
 }
+
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -46,13 +48,52 @@ const resolvers = {
   },
   Mutation: {
     // addTask(projectId: ID!, input: AddTaskInput!): Task!
-    addTask: (_s, { projectId, input }, { dataSources }) => {
-      console.log("projectId:" + projectId);
-      console.log(input);
+    addTask: async (_s, { projectId, input }, { dataSources }) => {
+      const newTask = await dataSources.projectDatasource.addTaskToProject(
+        projectId,
+        input
+      );
 
-      return dataSources.projectDatasource.addTaskToProject(projectId, input);
+      pubsub.publish("NewTaskEvent", { newTask });
+
+      return newTask;
+    },
+    updateTaskState: async (_s, { taskId, newState }, { dataSources }) => {
+      const updatedTasks = await dataSources.projectDatasource.updateTaskState(
+        taskId,
+        newState
+      );
+
+      pubsub.publish("TaskChangedEvent", { task: updatedTasks });
+
+      return updatedTasks;
     }
   },
+
+  Subscription: {
+    onNewTask: {
+      resolve(payload, _s, _a, _c) {
+        return payload.newTask;
+      },
+      subscribe: () => {
+        return pubsub.asyncIterator("NewTaskEvent");
+      }
+    },
+    onTaskChange: {
+      resolve(payload, _s, _a, _c) {
+        return payload.task;
+      },
+      subscribe: withFilter(
+        () => pubsub.asyncIterator("TaskChangedEvent"),
+        (payload, variables) => {
+          return variables.projectId
+            ? variables.projectId === payload.task._projectId
+            : true;
+        }
+      )
+    }
+  },
+
   Project: {
     owner: async (project, _, { dataSources }) => {
       // 1+n Problem when the query asks for more than one project 😱

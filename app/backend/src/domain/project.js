@@ -14,6 +14,8 @@ Query.prototype.submit = function() {
   submit.apply(this, arguments);
 };
 
+const TASK_STATES = ["NEW", "RUNNING", "FINISHED"];
+
 function projectFromRow(row) {
   return {
     id: row.id,
@@ -128,17 +130,25 @@ class ProjectDBDataSource extends DataSource {
       client.release();
     }
   }
-}
 
+  async updateTaskState(taskId, newState) {
+    await this.pool.query("UPDATE tasks SET state = $1 WHERE id = $2", [
+      TASK_STATES.findIndex(taskState => taskState === newState),
+      taskId
+    ]);
+
+    return this.getTaskById(taskId);
+  }
+}
 function taskFromRow(row, prefix = "") {
-  const STATES = ["NEW", "RUNNING", "FINISHED"];
   const task = {
     id: row[`${prefix}id`],
     title: row[`${prefix}title`],
     description: row[`${prefix}description`],
-    state: STATES[row[`${prefix}state`]],
+    state: TASK_STATES[row[`${prefix}state`]],
     toBeFinishedAt: row[`${prefix}finish_date`].toISOString(),
-    _assigneeId: row[`${prefix}assignee_id`]
+    _assigneeId: row[`${prefix}assignee_id`],
+    _projectId: row[`${prefix}project_id`]
   };
 
   return task;
