@@ -93,7 +93,7 @@ const server = new ApolloServer({
   resolvers,
   dataSources: () => {
     return {
-      userservice: new UserService(),
+      userservice: new UserService("http://localhost:4010/"),
       projectDatasource: new ProjectDBDataSource({
         user: "klaus",
         host: "localhost",

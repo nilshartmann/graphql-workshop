@@ -1,9 +1,9 @@
 const { RESTDataSource } = require("apollo-datasource-rest");
 
 class UserService extends RESTDataSource {
-  constructor() {
+  constructor(baseURL) {
     super();
-    this.baseURL = "http://localhost:9010/";
+    this.baseURL = baseURL;
   }
 
   listAllUsers() {
@@ -14,7 +14,7 @@ class UserService extends RESTDataSource {
   getUser(id) {
     console.log(`READING USER WITH ID '${id}' FROM '${this.baseURL}'`);
     // this method is invoked each time a user is requested
-    // BUT: the actual call to the REST service might not be done
+    // BUT: the actual remote call to the REST service might not be done
     //      due to cache-headers received from a previous call
     //      https://stackoverflow.com/a/53362001/6134498
 
