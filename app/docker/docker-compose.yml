@@ -12,10 +12,3 @@ services:
     volumes:
       - ./init-project-db.sql:/docker-entrypoint-initdb.d/init-project-db.sql
       - ./db-data:/var/lib/postgresql/data
-  nginx:
-    image: nh/nginx
-    build:
-      context: nginx
-    container_name: nginx_proxy
-    ports:
-      - "4088:4088"

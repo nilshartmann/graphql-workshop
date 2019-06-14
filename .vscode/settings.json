@@ -9,7 +9,9 @@
     "**/node_modules": true,
     "**/yarn.lock": true,
     ".gitattributes": true,
-    ".gitignore": true,
-    ".prettierignore": true
+    "**/.gitignore": true,
+    ".prettierignore": true,
+    "**/.prettier*": true,
+    "**/db-data": true
   }
 }
