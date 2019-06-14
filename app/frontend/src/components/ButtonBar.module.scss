@@ -2,7 +2,15 @@
   display: flex;
   justify-content: flex-end;
 
-  margin-bottom: 2rem;
+  //margin-bottom: 2rem;
+
+  &.left {
+    justify-content: flex-start;
+
+    button {
+      margin-right: 1rem;
+    }
+  }
 
   button {
     margin-left: 2rem;

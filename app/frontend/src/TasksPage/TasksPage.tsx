@@ -7,10 +7,10 @@ import { useNavigator } from "../infra/NavigationProvider";
 import gql from "graphql-tag";
 import { RouteComponentProps } from "react-router";
 import { TasksPageQuery, TasksPageQuery_project_tasks, TasksPageQueryVariables } from "./querytypes/TasksPageQuery";
-import { Query } from "@apollo/react-components";
 import { mapTaskState } from "../util/mapper";
+import { useQuery } from "@apollo/react-hooks";
 
-const TASKS_QUERY = gql`
+const TASKS_PAGE_QUERY = gql`
   query TasksPageQuery($projectId: ID!) {
     project(id: $projectId) {
       title
@@ -27,10 +27,19 @@ const TASKS_QUERY = gql`
   }
 `;
 
-interface TasksPageTableProps {
+const TASK_CHANGE_SUBSCRIPTION = gql`
+  subscription TaskChangeSubscription($projectId: ID!) {
+    onTaskChange(projectId: $projectId) {
+      id
+      state
+    }
+  }
+`;
+
+type TasksPageTableProps = {
   projectId: string;
   tasks: TasksPageQuery_project_tasks[];
-}
+};
 function TasksTable({ projectId, tasks }: TasksPageTableProps) {
   const navigator = useNavigator();
 
@@ -62,42 +71,43 @@ function TasksTable({ projectId, tasks }: TasksPageTableProps) {
   );
 }
 
-interface TasksPageProps extends RouteComponentProps<{ projectId: string }> {}
+type TasksPageProps = RouteComponentProps<{ projectId: string }>;
 
 export default function TasksPage(props: TasksPageProps) {
   const projectId = props.match.params.projectId;
   const navigator = useNavigator();
 
+  const { loading, error, data, subscribeToMore } = useQuery<TasksPageQuery, TasksPageQueryVariables>(TASKS_PAGE_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: { projectId }
+  });
+
+  React.useEffect(() => {
+    if (subscribeToMore && projectId) {
+      return subscribeToMore({
+        document: TASK_CHANGE_SUBSCRIPTION,
+        variables: { projectId }
+      });
+    }
+  }, [projectId, subscribeToMore]);
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+  if (error || !data) {
+    return <h2>Sorry... Something failed while loading data </h2>;
+  }
+
+  if (!data.project) {
+    return <h2>Project not found!</h2>;
+  }
+
   return (
     <div className={styles.TasksPage}>
-      <Query<TasksPageQuery, TasksPageQueryVariables>
-        query={TASKS_QUERY}
-        fetchPolicy="cache-and-network"
-        variables={{ projectId }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) {
-            return <h2>Loading...</h2>;
-          }
-          if (error || !data) {
-            return <h2>Sorry... Something failed while loading data </h2>;
-          }
-
-          if (!data.project) {
-            return <h2>Project not found!</h2>;
-          }
-
-          return (
-            <>
-              <header>
-                <h1>{data.project.title} Tasks</h1>
-              </header>
-              <TasksTable projectId={data.project.id} tasks={data.project.tasks} />
-            </>
-          );
-        }}
-      </Query>
-
+      <header>
+        <h1>{data.project.title} Tasks</h1>
+      </header>
+      <TasksTable projectId={data.project.id} tasks={data.project.tasks} />
       <div className={styles.ButtonBar}>
         <Button onClick={e => navigator.openAddTaskPage(projectId)} icon={ChevronRight}>
           Add Task

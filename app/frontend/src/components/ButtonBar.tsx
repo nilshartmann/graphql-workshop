@@ -1,10 +1,12 @@
 import * as React from "react";
 import styles from "./ButtonBar.module.scss";
 
-interface ButtonBarProps {
+type ButtonBarProps = {
+  left?: boolean;
   children: React.ReactNode;
-}
+};
 
-export default function ButtonBar({ children }: ButtonBarProps) {
-  return <div className={styles.ButtonBar}>{children}</div>;
+export default function ButtonBar({ left, children }: ButtonBarProps) {
+  const className = left ? `${styles.ButtonBar} ${styles.left}` : styles.ButtonBar;
+  return <div className={className}>{children}</div>;
 }

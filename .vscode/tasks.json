@@ -34,6 +34,16 @@
       }
     },
     {
+      "label": "CODEGEN",
+      "type": "npm",
+      "script": "codegen:watch",
+      "path": "app/frontend/",
+      "problemMatcher": [],
+      "presentation": {
+        "group": "apps"
+      }
+    },
+    {
       "label": "ALL SERVICES",
       "dependsOn": ["USERSERVICE", "BACKEND"],
       "problemMatcher": []

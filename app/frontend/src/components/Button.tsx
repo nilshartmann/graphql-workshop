@@ -6,13 +6,18 @@ import { MouseEventHandler } from "react";
 interface ButtonProps {
   children: React.ReactNode;
   secondary?: boolean;
+  tertiary?: boolean;
   icon?: Icon;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
 }
 
-export default function Button({ children, icon, onClick, secondary, disabled }: ButtonProps) {
-  const buttonClassName = secondary ? `${styles.Button} ${styles.secondary}` : styles.Button;
+export default function Button({ children, icon, onClick, secondary, tertiary, disabled }: ButtonProps) {
+  const buttonClassName = secondary
+    ? `${styles.Button} ${styles.secondary}`
+    : tertiary
+    ? `${styles.Button} ${styles.tertiary}`
+    : styles.Button;
 
   return (
     <button className={buttonClassName} onClick={onClick} disabled={disabled}>

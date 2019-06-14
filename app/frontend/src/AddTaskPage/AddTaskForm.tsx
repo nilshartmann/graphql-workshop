@@ -38,7 +38,6 @@ export function AddTaskForm({ users, onSave, onCancel }: AddTaskFormProps) {
   const buttonDisabled =
     title === "" || description === "" || assigneeId === "" || toBeFinishedAt === "" || parseDate(toBeFinishedAt) === "";
 
-  console.log("buttonDisabled", buttonDisabled);
   return (
     <Form>
       <Input label="Name" value={title} onChange={setTitle} />

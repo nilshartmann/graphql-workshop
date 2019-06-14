@@ -16,7 +16,6 @@ interface SelectProps {
 export default function Select({ label, value, options, onNewValue }: SelectProps) {
   function handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const value = e.currentTarget.value;
-    console.log("setNewValue", value);
     if ("UNSELECTED" === value) {
       onNewValue("");
     } else {

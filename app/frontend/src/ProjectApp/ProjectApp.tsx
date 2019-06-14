@@ -20,7 +20,7 @@ function Header() {
 function Footer() {
   return (
     <footer className={styles.Footer}>
-      <a href="https://github.com/nilshartmann/graphql-workshop" target="_blank">
+      <a href="https://github.com/nilshartmann/graphql-workshop" target="_blank" rel="noopener noreferrer">
         https://github.com/nilshartmann/graphql-workshop
       </a>
     </footer>
