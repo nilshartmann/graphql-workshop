@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": "enterjs_graphql.html",
+      "options": {
+        "printWidth": 120
+      }
+    }
+  ]
+}

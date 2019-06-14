@@ -58,7 +58,7 @@ export default function ProjectsPage() {
   return (
     <div className={styles.ProjectsPage}>
       <header>
-        <h1>Your Projects</h1>
+        <h1>All Projects</h1>
       </header>
       <Query<ProjectsPageQuery> query={PROJECTS_PAGE_QUERY}>
         {({ loading, error, data }) => {

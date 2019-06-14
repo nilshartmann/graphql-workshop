@@ -1,47 +1,75 @@
 const { gql } = require("apollo-server");
 
 module.exports = gql`
+  """
+  A User describes an actor in the system
+  """
   type User {
     id: ID!
 
-    # The login is used by the user to log in to our System
+    """
+    The login is used by the user to log in to our System
+    """
     login: String!
 
-    # The human readable name of the person
+    """
+    The human readable name of the person
+    """
     name: String!
 
-    # For Debugging: a unique "id" that is generate inside the Userservice for each request
-    # Having this id one can verify if a resource comes from the apollo cache
-    # (that is requestId does not change) or if it's actually (re-)fetched from the service
+    """
+    For Debugging: a unique "id" that is generate inside the Userservice for each request
+    Having this id one can verify if a resource comes from the apollo cache
+    (that is requestId does not change) or if it's actually (re-)fetched from the service
+    """
     requestId: String!
   }
 
+  """
+  A **Project** is the central entity in our system.
+
+  It is owned by a **User**
+  and have 0..n **Tasks** assigned to it. Projects can be grouped by a **Category**
+  to make management easier.
+  """
   type Project {
     id: ID!
 
-    # A a simple, concise title for your project
+    """
+    A a simple, concise title for your project
+    """
     title: String!
 
-    # A description of this project in deep detail so others can
-    # unterstand the goals and constraints of this project.
+    """
+    A description of this project in deep detail so others can
+    unterstand the goals and constraints of this project.
+    """
     description: String!
 
-    # The project owner
+    """
+    The project owner
+    """
     owner: User!
 
     category: Category!
 
-    # You split your Project into several tasks that you
+    """
+    You split your Project into several tasks that you
     # have to work on to finish this Project's goal
+    """
     tasks: [Task!]!
 
-    # Get a task by it's unique id. Return null if that
-    # task could not be found
+    """
+    Get a task by it's unique id. Return null if that
+    task could not be found
+    """
     task(id: ID!): Task
   }
 
-  # Projects are ground into user-defined categories
-  # (like 'Private', 'Business', 'Hobby',...)
+  """
+  Projects are ground into user-defined categories
+  (like 'Private', 'Business', 'Hobby',...)
+  """
   type Category {
     id: ID!
     name: String!
@@ -53,25 +81,36 @@ module.exports = gql`
     FINISHED
   }
 
-  # A Task is part of a Project. It represents an actual
-  # task of a Tasks that needs to be fulfilled
-  # to complete the Project
+  """
+  A Task is part of a Project. It represents an actual
+  task of a Tasks that needs to be fulfilled
+  to complete the Project
+  """
   type Task {
     id: ID!
 
-    # A concicse title of this task, that describes what to do
+    """
+    A concicse title of this task, that describes what to do
+    """
     title: String!
 
-    # A complete and detailed description what should be done in this task.
-    # The description should be understandable also by people that are not
-    # familiar with this task, so they can get into without having
-    # to ask for further details
+    """
+    A complete and detailed description what should be done in this task.
+    The description should be understandable also by people that are not
+    familiar with this task, so they can get into without having
+    to ask for further details
+    """
     description: String!
     state: TaskState!
 
-    # Who works on this Task or should work on the task
+    """
+    Who works on this Task or should work on the task
+    """
     assignee: User!
 
+    """
+    Deadline for this task
+    """
     toBeFinishedAt: String!
   }
 
@@ -83,13 +122,11 @@ module.exports = gql`
     users: [User!]!
     user(id: ID!): User
 
-    # Return an unordered list of all projects
-    # Everyone can actually SEE any projects without
-    # being logged in. Only modifications to a project
-    # (or Task) can be done when logged in
+    """
+    Return an unordered list of all projects
+    """
     projects: [Project!]!
 
-    # Return the specified project
     project(id: ID!): Project
   }
 
@@ -101,7 +138,15 @@ module.exports = gql`
   }
 
   type Mutation {
+    """
+    Create a new Task. Returns the task just created, populated with
+    its server-side generated ID
+    """
     addTask(projectId: ID!, input: AddTaskInput!): Task!
+
+    """
+    Change the state of the specified task
+    """
     updateTaskState(taskId: ID!, newState: TaskState): Task!
   }
 

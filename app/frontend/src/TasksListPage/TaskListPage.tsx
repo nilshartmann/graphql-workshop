@@ -110,7 +110,7 @@ export default function TaskListPage(props: TaskListPageProps) {
     <div className={styles.TaskListPage}>
       <header>
         <h1>
-          <Link to="/">Projects</Link> > {data.project.title} Tasks
+          <Link to="/">All Projects</Link> > {data.project.title} Tasks
         </h1>
       </header>
       <TasksTable projectId={data.project.id} tasks={data.project.tasks} />
