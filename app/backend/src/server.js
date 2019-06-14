@@ -1,53 +1,49 @@
 const { ApolloServer, PubSub, withFilter } = require("apollo-server");
 const graphqlFields = require("graphql-fields");
 const schema = require("./schema");
-const UserService = require("./domain/users");
-const ProjectDBDataSource = require("./domain/project");
-
-function helloWorld(_source, _args) {
-  return `Hello, World @ ${new Date().toLocaleTimeString()}`;
-}
+const UserRESTDataSource = require("./domain/UserRESTDataSource");
+const ProjectDBDataSource = require("./domain/ProjectDBDataSource");
 
 const pubsub = new PubSub();
 
+function determineQueriesProjectFields(info) {
+  const fields = graphqlFields(info, {}, { processArguments: true });
+
+  return {
+    withCategory: !!fields.category,
+    withTasks: !!fields.tasks,
+    withTask: fields.task
+      ? { id: fields.task.__arguments[0].id.value }
+      : undefined
+  };
+}
+
 const resolvers = {
   Query: {
-    ping: helloWorld,
+    ping: () => `Hello, World @ ${new Date().toLocaleTimeString()}`,
     users: async (_s, _a, { dataSources }) => {
-      return dataSources.userservice.listAllUsers();
+      return dataSources.userDataSource.listAllUsers();
     },
     user: async (_s, { id }, { dataSources }) => {
       // here we can be sure that id is not null, as it's defined
       // as a mandatory field in the graphql schema
-      return dataSources.userservice.getUser(id);
+      return dataSources.userDataSource.getUser(id);
     },
 
     projects: async (_s, _a, { dataSources }, info) => {
-      const fields = graphqlFields(info, {}, { processArguments: true });
-
-      return dataSources.projectDatasource.listAllProjects({
-        withCategory: !!fields.category,
-        withTasks: !!fields.tasks,
-        withTask: fields.task
-          ? { id: fields.task.__arguments[0].id.value }
-          : undefined
-      });
+      return dataSources.projectDatasource.listAllProjects(
+        determineQueriesProjectFields(info)
+      );
     },
 
     project: async (_s, { id }, { dataSources }, info) => {
-      const fields = graphqlFields(info, {}, { processArguments: true });
-
-      return dataSources.projectDatasource.getProjectById(id, {
-        withCategory: !!fields.category,
-        withTasks: !!fields.tasks,
-        withTask: fields.task
-          ? { id: fields.task.__arguments[0].id.value }
-          : undefined
-      });
+      return dataSources.projectDatasource.getProjectById(
+        id,
+        determineQueriesProjectFields(info)
+      );
     }
   },
   Mutation: {
-    // addTask(projectId: ID!, input: AddTaskInput!): Task!
     addTask: async (_s, { projectId, input }, { dataSources }) => {
       const newTask = await dataSources.projectDatasource.addTaskToProject(
         projectId,
@@ -97,8 +93,8 @@ const resolvers = {
   Project: {
     owner: async (project, _, { dataSources }) => {
       // 1+n Problem when the query asks for more than one project 😱
-      //     (more or less solved thx to the fact, that the userservice caches)
-      return dataSources.userservice.getUser(project._ownerId);
+      //     (more or less solved thx to the fact, that the userDataSource caches)
+      return dataSources.userDataSource.getUser(project._ownerId);
     },
     category: async (project, _, { dataSources }) => {
       if (project.category) {
@@ -124,7 +120,7 @@ const resolvers = {
   },
   Task: {
     assignee: async (task, _, { dataSources }) => {
-      return dataSources.userservice.getUser(task._assigneeId);
+      return dataSources.userDataSource.getUser(task._assigneeId);
     }
   }
 };
@@ -134,7 +130,7 @@ const server = new ApolloServer({
   resolvers,
   dataSources: () => {
     return {
-      userservice: new UserService("http://localhost:4010/"),
+      userDataSource: new UserRESTDataSource("http://localhost:4010/"),
       projectDatasource: new ProjectDBDataSource({
         user: "klaus",
         host: "localhost",
@@ -145,6 +141,7 @@ const server = new ApolloServer({
     };
   },
   playground: {
+    // Playground runs at http://localhost:4000
     settings: {
       "editor.theme": "light",
       "schema.polling.enable": false

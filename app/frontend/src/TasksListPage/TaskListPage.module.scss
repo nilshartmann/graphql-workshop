@@ -5,9 +5,20 @@
     h1 {
       margin-left: 3rem;
     }
+
+    a {
+      color: var(--color-text);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   .ButtonBar {
-    margin-left: 3rem;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 3.5rem;
   }
 }

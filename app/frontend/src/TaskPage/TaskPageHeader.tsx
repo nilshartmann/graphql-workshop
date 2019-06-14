@@ -8,14 +8,18 @@ interface TaskPageHeaderProps {
 export default function TaskPageHeader({ project }: TaskPageHeaderProps) {
   const { task } = project;
 
+  const projectListLink = <Link to="/">Projects</Link>;
+
   const titleLink = <Link to={`/project/${project.id}/tasks`}>{project.title}</Link>;
 
   const titleElement = task ? (
     <h1>
-      {titleLink} > {task.title}
+      {projectListLink} > {titleLink} > {task.title}
     </h1>
   ) : (
-    <h1>{titleLink}</h1>
+    <h1>
+      {projectListLink} > {titleLink}
+    </h1>
   );
 
   return <header>{titleElement}</header>;

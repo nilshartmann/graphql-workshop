@@ -9,6 +9,7 @@ import { RouteComponentProps } from "react-router";
 import { TaskListPageQuery, TaskListPageQuery_project_tasks, TaskListPageQueryVariables } from "./querytypes/TaskListPageQuery";
 import { mapTaskState } from "../util/mapper";
 import { useQuery } from "@apollo/react-hooks";
+import { Link } from "react-router-dom";
 
 const TASK_LIST_PAGE_QUERY = gql`
   query TaskListPageQuery($projectId: ID!) {
@@ -108,7 +109,9 @@ export default function TaskListPage(props: TaskListPageProps) {
   return (
     <div className={styles.TaskListPage}>
       <header>
-        <h1>{data.project.title} Tasks</h1>
+        <h1>
+          <Link to="/">Projects</Link> > {data.project.title} Tasks
+        </h1>
       </header>
       <TasksTable projectId={data.project.id} tasks={data.project.tasks} />
       <div className={styles.ButtonBar}>
