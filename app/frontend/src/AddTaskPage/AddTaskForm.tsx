@@ -41,7 +41,7 @@ export function AddTaskForm({ users, onSave, onCancel }: AddTaskFormProps) {
   return (
     <Form>
       <Input label="Name" value={title} onChange={setTitle} />
-      <Input label="Finish until" value={toBeFinishedAt} onChange={setToBeFinishedAt} />
+      <Input label="Finish until (DD.MM.YYYY)" value={toBeFinishedAt} onChange={setToBeFinishedAt} />
       <Select label="Assign to" value={assigneeId} options={assignSelectOptions} onNewValue={setAssigneeId} />
       <TextArea label="Description" value={description} onChange={setDescription} />
 

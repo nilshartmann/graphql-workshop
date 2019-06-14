@@ -5,33 +5,33 @@
 import { TaskState } from "./../../global-query-types";
 
 // ====================================================
-// GraphQL query operation: TasksPageQuery
+// GraphQL query operation: TaskListPageQuery
 // ====================================================
 
-export interface TasksPageQuery_project_tasks_assignee {
+export interface TaskListPageQuery_project_tasks_assignee {
   __typename: "User";
   name: string;
 }
 
-export interface TasksPageQuery_project_tasks {
+export interface TaskListPageQuery_project_tasks {
   __typename: "Task";
   id: string;
   title: string;
-  assignee: TasksPageQuery_project_tasks_assignee;
+  assignee: TaskListPageQuery_project_tasks_assignee;
   state: TaskState;
 }
 
-export interface TasksPageQuery_project {
+export interface TaskListPageQuery_project {
   __typename: "Project";
   title: string;
   id: string;
-  tasks: TasksPageQuery_project_tasks[];
+  tasks: TaskListPageQuery_project_tasks[];
 }
 
-export interface TasksPageQuery {
-  project: TasksPageQuery_project | null;
+export interface TaskListPageQuery {
+  project: TaskListPageQuery_project | null;
 }
 
-export interface TasksPageQueryVariables {
+export interface TaskListPageQueryVariables {
   projectId: string;
 }

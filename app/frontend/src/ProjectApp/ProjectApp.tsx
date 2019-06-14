@@ -3,7 +3,7 @@ import styles from "./ProjectApp.module.scss";
 import AddTaskPage from "../AddTaskPage/AddTaskPage";
 import { Route, Switch } from "react-router";
 import ProjectsPage from "../ProjectsPage";
-import TasksPage from "../TasksPage";
+import TaskListPage from "../TasksListPage";
 import { Link } from "react-router-dom";
 import { ApolloClient } from "apollo-client";
 import { withApollo } from "@apollo/react-hoc";
@@ -37,7 +37,7 @@ export function ProjectApp({ client }: ProjectAppProps) {
       <main>
         <Switch>
           <Route exact path={"/"} component={ProjectsPage} />
-          <Route exact path={"/project/:projectId/tasks"} component={TasksPage} />
+          <Route exact path={"/project/:projectId/tasks"} component={TaskListPage} />
           <Route exact path={"/project/:projectId/tasks/:taskId"} component={TaskPage} />
           <Route exact path={"/project/:projectId/addtaks"} component={AddTaskPage} />
         </Switch>

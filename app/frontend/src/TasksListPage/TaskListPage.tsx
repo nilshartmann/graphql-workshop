@@ -1,17 +1,17 @@
 import NavButton from "../components/NavButton";
-import styles from "../ProjectApp/ProjectApp.module.scss";
+import styles from "./TaskListPage.module.scss";
 import Button from "../components/Button";
 import { ChevronRight } from "@primer/octicons-react";
 import * as React from "react";
 import { useNavigator } from "../infra/NavigationProvider";
 import gql from "graphql-tag";
 import { RouteComponentProps } from "react-router";
-import { TasksPageQuery, TasksPageQuery_project_tasks, TasksPageQueryVariables } from "./querytypes/TasksPageQuery";
+import { TaskListPageQuery, TaskListPageQuery_project_tasks, TaskListPageQueryVariables } from "./querytypes/TaskListPageQuery";
 import { mapTaskState } from "../util/mapper";
 import { useQuery } from "@apollo/react-hooks";
 
-const TASKS_PAGE_QUERY = gql`
-  query TasksPageQuery($projectId: ID!) {
+const TASK_LIST_PAGE_QUERY = gql`
+  query TaskListPageQuery($projectId: ID!) {
     project(id: $projectId) {
       title
       id
@@ -38,7 +38,7 @@ const TASK_CHANGE_SUBSCRIPTION = gql`
 
 type TasksPageTableProps = {
   projectId: string;
-  tasks: TasksPageQuery_project_tasks[];
+  tasks: TaskListPageQuery_project_tasks[];
 };
 function TasksTable({ projectId, tasks }: TasksPageTableProps) {
   const navigator = useNavigator();
@@ -71,16 +71,19 @@ function TasksTable({ projectId, tasks }: TasksPageTableProps) {
   );
 }
 
-type TasksPageProps = RouteComponentProps<{ projectId: string }>;
+type TaskListPageProps = RouteComponentProps<{ projectId: string }>;
 
-export default function TasksPage(props: TasksPageProps) {
+export default function TaskListPage(props: TaskListPageProps) {
   const projectId = props.match.params.projectId;
   const navigator = useNavigator();
 
-  const { loading, error, data, subscribeToMore } = useQuery<TasksPageQuery, TasksPageQueryVariables>(TASKS_PAGE_QUERY, {
-    fetchPolicy: "cache-and-network",
-    variables: { projectId }
-  });
+  const { loading, error, data, subscribeToMore } = useQuery<TaskListPageQuery, TaskListPageQueryVariables>(
+    TASK_LIST_PAGE_QUERY,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: { projectId }
+    }
+  );
 
   React.useEffect(() => {
     if (subscribeToMore && projectId) {
@@ -103,7 +106,7 @@ export default function TasksPage(props: TasksPageProps) {
   }
 
   return (
-    <div className={styles.TasksPage}>
+    <div className={styles.TaskListPage}>
       <header>
         <h1>{data.project.title} Tasks</h1>
       </header>
