@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { ApolloProvider } from "@apollo/react-hooks";
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 
 import createApolloClient from "./infra/createApolloClient";
 import NavigationProvider from "./infra/NavigationProvider";
