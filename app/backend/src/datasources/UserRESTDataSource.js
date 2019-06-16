@@ -1,9 +1,9 @@
 const { RESTDataSource } = require("apollo-datasource-rest");
 
 class UserRESTDataSource extends RESTDataSource {
-  constructor(baseURL) {
+  constructor() {
     super();
-    this.baseURL = baseURL;
+    this.baseURL = "http://localhost:4010/";
   }
 
   listAllUsers() {

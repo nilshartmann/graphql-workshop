@@ -37,9 +37,15 @@ function projectFromRow(row) {
 }
 
 class ProjectDBDataSource extends DataSource {
-  constructor(config) {
+  constructor() {
     super();
-    this.config = config;
+    this.config = {
+      user: "klaus",
+      host: "localhost",
+      database: "project_db",
+      password: "secretpw",
+      port: 4432
+    };
   }
   initialize(_config) {
     this.pool = new Pool(this.config);
