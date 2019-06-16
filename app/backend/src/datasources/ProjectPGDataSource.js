@@ -1,42 +1,17 @@
 const { DataSource } = require("apollo-datasource");
 const { Pool, Query } = require("pg");
+activePostgresLogging();
 
-// Very basic Postgres SQL logging
-// https://github.com/brianc/node-postgres/issues/433#issuecomment-472332408
-const submit = Query.prototype.submit;
-Query.prototype.submit = function() {
-  const text = this.text;
-  const values = this.values || [];
-  const query = text.replace(/\$([0-9]+)/g, (m, v) =>
-    JSON.stringify(values[parseInt(v) - 1])
-  );
-  console.log(`Executing Query: ${query}`);
-  submit.apply(this, arguments);
-};
+const { projectFromRow, taskFromRow, taskStateToDb } = require("./mapping");
 
-const TASK_STATES = ["NEW", "RUNNING", "FINISHED"];
-
-function projectFromRow(row) {
-  return {
-    id: row.id,
-    description: row.description,
-    title: row.title,
-    // category-id and owner-id are not exposed through graphql
-    // but we need them in the specialized resolvers
-    // to load the 'real' objects
-    _categoryId: row.category_id,
-    _ownerId: row.owner_id,
-    category: row.category_name
-      ? {
-          name: row.category_name,
-          id: row.category_id
-        }
-      : undefined,
-    task: row.task_id ? taskFromRow(row, "task_") : undefined
-  };
-}
-
-class ProjectDBDataSource extends DataSource {
+/**
+ * A Postgres-backed DataSource.
+ *
+ * This implementation support "query optimiztation" and
+ * loads complete object graphs (e.g. projects -> tasks)
+ * when requested in a GraphQL query
+ */
+class ProjectPGDataSource extends DataSource {
   constructor() {
     super();
     this.config = {
@@ -53,15 +28,9 @@ class ProjectDBDataSource extends DataSource {
     this.pool.on("error", (error, _client) => {
       console.error("Error in PG Pool: ", error);
     });
-
-    // this.pool.on("connect", client => {
-    //   console.log("fyi: Connection to PG opened!");
-    // });
   }
 
-  async listAllProjects(options = {}) {
-    console.log("listAllProjects", options);
-
+  async getAllProjects(options = {}) {
     const query = buildProjectsQuery(options);
 
     const { rows } = await this.pool.query(...query);
@@ -139,25 +108,12 @@ class ProjectDBDataSource extends DataSource {
 
   async updateTaskState(taskId, newState) {
     await this.pool.query("UPDATE tasks SET state = $1 WHERE id = $2", [
-      TASK_STATES.findIndex(taskState => taskState === newState),
+      taskStateToDb(newState),
       taskId
     ]);
 
     return this.getTaskById(taskId);
   }
-}
-function taskFromRow(row, prefix = "") {
-  const task = {
-    id: row[`${prefix}id`],
-    title: row[`${prefix}title`],
-    description: row[`${prefix}description`],
-    state: TASK_STATES[row[`${prefix}state`]],
-    toBeFinishedAt: row[`${prefix}finish_date`].toISOString(),
-    _assigneeId: row[`${prefix}assignee_id`],
-    _projectId: row[`${prefix}project_id`]
-  };
-
-  return task;
 }
 
 /** Build "optimized" Query using JOINs for a GraphQL request that selects
@@ -211,4 +167,19 @@ function buildProjectsQuery(options, projectId) {
   ];
 }
 
-module.exports = ProjectDBDataSource;
+function activePostgresLogging() {
+  // Very basic Postgres SQL logging
+  // https://github.com/brianc/node-postgres/issues/433#issuecomment-472332408
+  const submit = Query.prototype.submit;
+  Query.prototype.submit = function() {
+    const text = this.text;
+    const values = this.values || [];
+    const query = text.replace(/\$([0-9]+)/g, (m, v) =>
+      JSON.stringify(values[parseInt(v) - 1])
+    );
+    console.log(`Executing Query: ${query}`);
+    submit.apply(this, arguments);
+  };
+}
+
+module.exports = ProjectPGDataSource;

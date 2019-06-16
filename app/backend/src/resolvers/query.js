@@ -24,7 +24,7 @@ module.exports = {
   },
 
   projects: async (_s, _a, { dataSources }, info) => {
-    return dataSources.projectDatasource.listAllProjects(
+    return dataSources.projectDatasource.getAllProjects(
       determineQueriesProjectFields(info)
     );
   },

@@ -2,7 +2,8 @@ const { ApolloServer, PubSub } = require("apollo-server");
 
 const typeDefs = require("./schema");
 const UserRESTDataSource = require("./datasources/UserRESTDataSource");
-const ProjectDBDataSource = require("./datasources/ProjectDBDataSource");
+const ProjectDataSource = require("./datasources/ProjectPGDataSource");
+//const ProjectSQLiteDataSource = require("./datasources/ProjectSQLiteDataSource");
 
 const pubsub = new PubSub();
 
@@ -25,7 +26,7 @@ const server = new ApolloServer({
 
   dataSources: () => ({
     userDataSource: new UserRESTDataSource(),
-    projectDatasource: new ProjectDBDataSource()
+    projectDatasource: new ProjectDataSource()
   }),
 
   playground: {
