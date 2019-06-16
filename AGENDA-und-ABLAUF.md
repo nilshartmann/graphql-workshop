@@ -11,9 +11,9 @@ In diesem Workshop lernst Du, was GraphQL ist, für welche Einsatzszenarien sich
 
 ## Agenda:
 
-ab 08.30 Registrierung und Begrüßungskaffee
+ab 08:30 Registrierung und Begrüßungskaffee
 
-09.30: Beginn
+**09:30 bis 10:45 (75 Minuten)**
 
 - Einführung in GraphQL, was ist das überhaupt?
 - Mögliche Anwendungsszenarien
@@ -21,7 +21,9 @@ ab 08.30 Registrierung und Begrüßungskaffee
 
 - Einführung in die Apollo Platform
 
-10:45 bis 11.00: Kaffeepause
+10:45 bis 11:00: Kaffeepause
+
+**11:00 bis 12:30 (90 Minuten)**
 
 - Wie wird eine GraphQL API mittels eines Schemas beschrieben?
 - Resolver zum Datenladen
@@ -29,14 +31,23 @@ ab 08.30 Registrierung und Begrüßungskaffee
 
 - Caching, Performance Optimierung
 
-12:30 - 13.30: Mittagspause / 14.45 - 15.15: Kaffeepause
+12:30 - 13.30: Mittagspause
+
+**13:30 bis 14:45 (75 Minuten)**
 
 - Einführung Apollo für React
+
 - Vorstellung Query-, Mutation und Subscription-Komponente
+
+14:45 bis 15:15 Kaffeepause
+
+**15:15 bis 17:00 (105 Minuten)**
+
 - Client-seitiges Caching
 - Typsichere Anwendungen mit TypeScript
 
 - Ausblick, Fragen & Diskussionen
+
   ca. 17 Uhr: Ende
 
 # Ablauf

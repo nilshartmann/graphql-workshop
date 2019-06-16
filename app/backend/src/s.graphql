@@ -1,0 +1,61 @@
+type User {
+  id: ID!
+  login: String!
+  name: String!
+  requestId: String!
+}
+
+type Project {
+  id: ID!
+  title: String!
+  description: String!
+  owner: User!
+  category: Category!
+  tasks: [Task!]!
+  task(id: ID!): Task
+}
+
+type Category {
+  id: ID!
+  name: String!
+}
+
+enum TaskState {
+  NEW
+  RUNNING
+  FINISHED
+}
+
+type Task {
+  id: ID!
+  title: String!
+  description: String!
+  state: TaskState!
+  assignee: User!
+  toBeFinishedAt: String!
+}
+
+type Query {
+  ping: String!
+  users: [User!]!
+  user(id: ID!): User
+  projects: [Project!]!
+  project(id: ID!): Project
+}
+
+input AddTaskInput {
+  title: String!
+  description: String!
+  toBeFinishedAt: String!
+  assigneeId: ID!
+}
+
+type Mutation {
+  addTask(projectId: ID!, input: AddTaskInput!): Task!
+  updateTaskState(taskId: ID!, newState: TaskState): Task!
+}
+
+type Subscription {
+  onNewTask: Task!
+  onTaskChange(projectId: ID): Task!
+}
