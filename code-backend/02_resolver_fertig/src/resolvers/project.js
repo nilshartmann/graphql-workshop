@@ -18,16 +18,11 @@ const Project = {
   },
 
   tasks: async (project, _args, { dataSources }) => {
-    // Implementiere den 'tasks' resolver
-    // Ruf dazu die entsprechende Methode an der projectDatasource auf
-    //   - Welchen Parameter musst Du der Methode übergeben?
+    return dataSources.projectDatasource.getTasks(project.id);
   },
 
-  task: async (_source, _args, { dataSources }) => {
-    // Implementiere den 'task' resolver
-    //
-    // Ruf dazu die entsprechende Methode an der projectDatasource auf
-    //   - Welchen Parameter musst Du der Methode übergeben?
+  task: async (_source, { id }, { dataSources }) => {
+    return dataSources.projectDatasource.getTaskById(id);
   }
 };
 
@@ -36,4 +31,4 @@ const Project = {
 //      aktiviert werden.
 //      Dazu das Project-Objekt als 'exports' setzen:
 //      module.exports = { Project };
-module.exports = null;
+module.exports = { Project };
