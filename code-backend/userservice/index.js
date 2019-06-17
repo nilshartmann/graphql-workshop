@@ -25,9 +25,7 @@ app.get("/users", (_, res) => {
 app.get("/users/:userId", (req, res) => {
   ++usersByIdCounter;
   console.log(
-    `READING USER WITH ID '${
-      req.params.userId
-    }' (REQUEST-ID: ${usersByIdCounter})`
+    `READING USER WITH ID '${req.params.userId}' (REQUEST-ID: ${usersByIdCounter})`
   );
 
   const user = users.find(u => u.id === req.params.userId);
@@ -38,7 +36,7 @@ app.get("/users/:userId", (req, res) => {
   }
 
   // make apollo server cache the requests
-  res.set("Cache-Control", "public, max-age=10, s-maxage=10");
+  // res.set("Cache-Control", "public, max-age=10, s-maxage=10");
   return res.json({ ...user, requestId: `usersById_${usersByIdCounter}` });
 });
 
