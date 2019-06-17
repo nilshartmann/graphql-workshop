@@ -138,8 +138,11 @@ class Database {
 }
 
 function createDatabase() {
+  const DB_PATH = path.resolve("../db.sqlite");
+  console.log(`Using SQLite file '${DB_PATH}'`);
+
   const dbPromise = sqlite
-    .open("./db.sqlite", { verbose: true })
+    .open(DB_PATH, { verbose: true })
     .then(initDatabase)
     .then(db => {
       db.driver.on("trace", query => console.log(`Executed Query: ${query}`));
