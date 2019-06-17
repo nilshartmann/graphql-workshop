@@ -1,5 +1,13 @@
 # Apollo GraphQL "Fullstack" Example Application
 
+Complete an final step.
+
+Including:
+* backend
+* postgres
+* optimized db access (JOINs per GraphQL Query)
+* caching via nging
+
 ![Example Application](screenshot.png)
 
 ## Processes and Ports
