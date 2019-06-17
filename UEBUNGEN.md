@@ -1,19 +1,19 @@
 # Übungen TEIL I - SERVER
 
-Übung 1:
+Übung 0:
 
 - Ausgeführt mit der fertigen Anwendung (eventuell auf meinem Mac)
 - Ziel:
 - Funktionsweise vom Playground verstanden,
 - funktionsweise von queries und mutations verstanden
 
-Übung 2:
+Übung 1:
 
 - Schema definieren für Project und Task
 - Resolver sind noch nicht fertig
 - Man kann sich aber die Doku im Playground ansehen
 
-Übung 3:
+Übung 2:
 
 - Wir bauen einen Resolver für die 'projects' und 'project' Felder im Query-Resolver
 - Wir bauen Resolver für 'tasks' und 'task' am Task-Resolver
@@ -23,7 +23,7 @@
 - UserService ist noch nicht fertig
 - danach können Queries ausgeführt werden, die noch nicht die User verwenden
 
-Übung 4: (optional)
+Übung 3: (optional)
 
 - DataSource für User implementieren
 

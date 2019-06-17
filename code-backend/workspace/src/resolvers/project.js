@@ -35,5 +35,5 @@ const Project = {
 //      Erst wenn das Schema vollständig ist, kann dieser Resolver
 //      aktiviert werden.
 //      Dazu das Project-Objekt als 'exports' setzen:
-//      module.exports = Project;
+//      module.exports = { Project };
 module.exports = null;
