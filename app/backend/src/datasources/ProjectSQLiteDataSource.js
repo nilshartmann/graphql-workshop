@@ -138,12 +138,13 @@ class Database {
 }
 
 function createDatabase() {
-  const dbPromise = sqlite.open("./db.sqlite", { verbose: true });
-  dbPromise
+  const dbPromise = sqlite
+    .open("./db.sqlite", { verbose: true })
     .then(initDatabase)
-    .then(db =>
-      db.driver.on("trace", query => console.log(`Executed Query: ${query}`))
-    );
+    .then(db => {
+      db.driver.on("trace", query => console.log(`Executed Query: ${query}`));
+      return db;
+    });
   return new Database(dbPromise);
 }
 
