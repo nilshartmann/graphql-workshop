@@ -18,13 +18,15 @@ const Project = {
   },
 
   tasks: async (project, _args, { dataSources }) => {
-    // Implementiere den 'tasks' resolver
+    // Implementiere den 'tasks' resolver, der alle Tasks
+    //   des Projektes zurückliefert
     // Ruf dazu die entsprechende Methode an der projectDatasource auf
     //   - Welchen Parameter musst Du der Methode übergeben?
   },
 
   task: async (_source, _args, { dataSources }) => {
-    // Implementiere den 'task' resolver
+    // Implementiere den 'task' resolver, der einen spezifischen
+    //   Task an Hand seiner Id zurückliefert
     //
     // Ruf dazu die entsprechende Methode an der projectDatasource auf
     //   - Welchen Parameter musst Du der Methode übergeben?
