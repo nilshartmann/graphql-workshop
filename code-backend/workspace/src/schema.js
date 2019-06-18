@@ -15,6 +15,7 @@
 // TODO 2: --------------------------------------------------------------------------
 //
 // Füge die Felder 'project' und 'projects' am Query-Type hinzu (s.u.)
+// Füge das Feld 'updateTaskState' am Mutation-Type hinzu (s.u.)
 // ---------------------------------------------------------------------------------
 //
 // Du kannst das Schema jederzeit im GraphQL Playground (http://localhost:4000)
@@ -72,7 +73,13 @@ module.exports = `
 
   type Mutation {
     addTask(projectId: ID!, input: AddTaskInput!): Task!
-    updateTaskState(taskId: ID!, newState: TaskState): Task!
+
+    # TODO 3:
+    # Ergänze die 'updateTaskState' Mutation
+    # Sie erwartet zwei Argumente: 
+    #    taskId (Pflicht)
+    #    newState (Pflicht)
+    # Sie liefert ein Task-Objekt zurück (Pflicht)
   }
 
   type Subscription {

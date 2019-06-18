@@ -145,7 +145,7 @@ module.exports = `
     """
     Change the state of the specified task
     """
-    updateTaskState(taskId: ID!, newState: TaskState): Task!
+    updateTaskState(taskId: ID!, newState: TaskState!): Task!
   }
 
   type Subscription {
