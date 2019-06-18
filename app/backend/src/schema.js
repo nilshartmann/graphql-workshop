@@ -1,6 +1,4 @@
-const { gql } = require("apollo-server");
-
-module.exports = gql`
+module.exports = `
   """
   A User describes an actor in the system
   """

@@ -1,5 +1,3 @@
-const { gql } = require("apollo-server");
-
 // TODO 1: --------------------------------------------------------------------------
 //
 // Füge den Type 'Project' zum Schema hinzu
@@ -24,7 +22,7 @@ const { gql } = require("apollo-server");
 // HINWEIS: Das AUSFÜHREN der Queries wird noch nicht funktionieren, aber im Doc Explorer
 //          des Playgrounds sollen die neuen Typen und Felder zu sehen sein.
 
-module.exports = gql`
+module.exports = `
   type User {
     id: ID!
     login: String!
