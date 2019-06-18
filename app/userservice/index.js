@@ -37,8 +37,8 @@ app.get("/users/:userId", (req, res) => {
       .json({ error: `User with id '${req.params.userId}' not found` });
   }
 
-  // make apollo server cache the requests
-  res.set("Cache-Control", "public, max-age=10, s-maxage=10");
+  // TODO: Remove comments in follogwin line to add Cache-Control header and make apollo server cache the requests
+  // res.set("Cache-Control", "public, max-age=10, s-maxage=10");
   return res.json({ ...user, requestId: `usersById_${usersByIdCounter}` });
 });
 
