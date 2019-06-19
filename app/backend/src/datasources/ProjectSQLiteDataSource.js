@@ -137,15 +137,26 @@ class Database {
   }
 }
 
+// would normally go to it's own module
+// and would be injected into the DataSource
+// for simplicity we go this way
+let __theDatabase;
 function createDatabase() {
-  const dbPromise = sqlite
-    .open("./db.sqlite", { verbose: true })
-    .then(initDatabase)
-    .then(db => {
-      db.driver.on("trace", query => console.log(`Executed Query: ${query}`));
-      return db;
-    });
-  return new Database(dbPromise);
+  if (!__theDatabase) {
+    const DB_PATH = path.resolve("../db.sqlite");
+    console.log(`Using SQLite file '${DB_PATH}'`);
+
+    const dbPromise = sqlite
+      .open(DB_PATH, { verbose: true })
+      .then(initDatabase)
+      .then(db => {
+        db.driver.on("trace", query => console.log(`Executed Query: ${query}`));
+        return db;
+      });
+
+    __theDatabase = new Database(dbPromise);
+  }
+  return __theDatabase;
 }
 
 module.exports = ProjectSQLiteDataSource;

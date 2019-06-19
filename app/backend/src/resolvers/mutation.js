@@ -9,6 +9,7 @@ module.exports = {
 
     return newTask;
   },
+
   updateTaskState: async (
     _s,
     { taskId, newState },

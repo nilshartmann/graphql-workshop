@@ -15,6 +15,9 @@ export interface UpdateTaskStateMutation_updateTaskState {
 }
 
 export interface UpdateTaskStateMutation {
+  /**
+   * Change the state of the specified task
+   */
   updateTaskState: UpdateTaskStateMutation_updateTaskState;
 }
 

@@ -14,6 +14,10 @@ export interface AddTaskMutation_addTask {
 }
 
 export interface AddTaskMutation {
+  /**
+   * Create a new Task. Returns the task just created, populated with
+   * its server-side generated ID
+   */
   addTask: AddTaskMutation_addTask;
 }
 

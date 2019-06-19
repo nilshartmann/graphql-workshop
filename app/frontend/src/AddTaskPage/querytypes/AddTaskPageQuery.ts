@@ -9,11 +9,17 @@
 export interface AddTaskPageQuery_project {
   __typename: "Project";
   id: string;
+  /**
+   * A a simple, concise title for your project
+   */
   title: string;
 }
 
 export interface AddTaskPageQuery_users {
   __typename: "User";
+  /**
+   * The human readable name of the person
+   */
   name: string;
   id: string;
 }

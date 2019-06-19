@@ -20,17 +20,19 @@ class UserRESTDataSource extends RESTDataSource {
 
     return this.get(`users/${id}`) //
       .catch(err => {
-        // https://github.com/apollographql/apollo-server/issues/1833
-        if (
-          err.extensions &&
-          err.extensions.response &&
-          err.extensions.response.status === 404
-        ) {
+        if (getStatusCode(err) === 404) {
           return null;
         }
         console.error("READING REST API FAILED", err);
         throw err;
       });
+  }
+}
+
+function getStatusCode(err) {
+  // https://github.com/apollographql/apollo-server/issues/1833
+  if (err && err.extensions && err.extensions.response) {
+    return err.extensions.response.status;
   }
 }
 
