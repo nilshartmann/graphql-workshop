@@ -116,14 +116,14 @@ module.exports = `
     """
     Returns hello world when the server is running
     """
-    ping: String!
+    ping: String! @cacheControl(maxAge: 5)
     users: [User!]!
     user(id: ID!): User
 
     """
     Return an unordered list of all projects
     """
-    projects: [Project!]!
+    projects: [Project!]! 
 
     project(id: ID!): Project
   }
