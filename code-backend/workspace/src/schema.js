@@ -67,7 +67,7 @@ module.exports = `
   input AddTaskInput {
     title: String!
     description: String!
-    toBeFinishedAt: String!
+    toBeFinishedAt: String
     assigneeId: ID!
   }
 

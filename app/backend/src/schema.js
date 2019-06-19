@@ -131,7 +131,13 @@ module.exports = `
   input AddTaskInput {
     title: String!
     description: String!
-    toBeFinishedAt: String!
+
+    """ The date when this task should be finished.
+
+    If the date is not specified, it's automatically set to
+    14 days from now
+    """
+    toBeFinishedAt: String
     assigneeId: ID!
   }
 

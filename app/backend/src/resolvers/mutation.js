@@ -1,5 +1,18 @@
 module.exports = {
   addTask: async (_s, { projectId, input }, { dataSources, pubsub }) => {
+    if (!input.toBeFinishedAt) {
+      // set default date if none is specified
+      const toBeFinishedAt = new Date();
+      toBeFinishedAt.setDate(toBeFinishedAt.getDate() + 14);
+      input.toBeFinishedAt = toBeFinishedAt.toISOString();
+    }
+
+    // Make sure specified user exists in userservice
+    const user = await dataSources.userDataSource.getUser(input.assigneeId);
+    if (!user) {
+      throw new Error(`Unknown assignee with id '${input.assigneeId}'`);
+    }
+
     const newTask = await dataSources.projectDatasource.addTaskToProject(
       projectId,
       input
