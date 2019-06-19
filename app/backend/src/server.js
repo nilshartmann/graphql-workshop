@@ -1,9 +1,10 @@
 const { ApolloServer, PubSub } = require("apollo-server");
+const responseCachePlugin = require("apollo-server-plugin-response-cache");
 
 const typeDefs = require("./schema");
 const UserRESTDataSource = require("./datasources/UserRESTDataSource");
 // const ProjectDataSource = require("./datasources/ProjectPGDataSource");
-/onst ProjectDataSource = require("./datasources/ProjectSQLiteDataSource");
+const ProjectDataSource = require("./datasources/ProjectSQLiteDataSource");
 
 const pubsub = new PubSub();
 
@@ -28,6 +29,8 @@ const server = new ApolloServer({
     projectDatasource: new ProjectDataSource(),
     userDataSource: new UserRESTDataSource()
   }),
+
+  plugins: [responseCachePlugin()],
 
   playground: {
     // Playground runs at http://localhost:4000
