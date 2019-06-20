@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { ApolloClient } from "apollo-client";
 import { withApollo } from "@apollo/react-hoc";
 import TaskPage from "../TaskPage/TaskPage";
+import ProjectsPageWithoutApollo from "ProjectsPage/ProjectsPageWithoutApollo";
 
 function Header() {
   return (
@@ -37,6 +38,7 @@ export function ProjectApp({ client }: ProjectAppProps) {
       <main>
         <Switch>
           <Route exact path={"/"} component={ProjectsPage} />
+          <Route exact path={"/p"} component={ProjectsPageWithoutApollo} />
           <Route exact path={"/project/:projectId/tasks"} component={TaskListPage} />
           <Route exact path={"/project/:projectId/tasks/:taskId"} component={TaskPage} />
           <Route exact path={"/project/:projectId/addtaks"} component={AddTaskPage} />
