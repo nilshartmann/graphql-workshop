@@ -15,7 +15,7 @@ export enum TaskState {
 export interface AddTaskInput {
   title: string;
   description: string;
-  toBeFinishedAt: string;
+  toBeFinishedAt?: string | null;
   assigneeId: string;
 }
 
