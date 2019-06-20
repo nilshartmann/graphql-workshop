@@ -49,8 +49,8 @@ export default function TaskPage(props: TaskPageProps) {
 
   const [runChangeTaskState] = useMutation<UpdateTaskStateMutation, UpdateTaskStateMutationVariables>(UPDATE_TASK_STATE_MUTATION);
 
-  async function changeTaskState(task: TaskPageQuery_project_task, newState: TaskState) {
-    await runChangeTaskState({
+  function changeTaskState(task: TaskPageQuery_project_task, newState: TaskState) {
+    runChangeTaskState({
       variables: {
         taskId: task.id,
         newState
