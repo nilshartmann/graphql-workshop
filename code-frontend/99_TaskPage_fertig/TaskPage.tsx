@@ -6,6 +6,10 @@ import { RouteComponentProps } from "react-router";
 import gql from "graphql-tag";
 import TaskView from "./TaskView";
 import { useQuery, useMutation } from "@apollo/react-hooks";
+import { TaskPageQuery, TaskPageQueryVariables, TaskPageQuery_project_task } from "./querytypes/TaskPageQuery";
+import TaskPageHeader from "./TaskPageHeader";
+import { UpdateTaskStateMutation, UpdateTaskStateMutationVariables } from "./querytypes/UpdateTaskStateMutation";
+import { TaskState } from "global-query-types";
 
 // ÜBUNG 1 TODO 1 ------------------------------------------------------------------------
 //
@@ -33,7 +37,24 @@ import { useQuery, useMutation } from "@apollo/react-hooks";
 //        TaskView und TaskPageHeader verwendet. Wenn sie also fehlen oder falsch sind,
 //        werden auch diese beiden Komponenten nicht compilieren...
 //
-const TASK_QUERY = null; // gql` HIER DEIN QUERY REIN`;
+const TASK_QUERY = gql`
+  query TaskPageQuery($projectId: ID!, $taskId: ID!) {
+    project(id: $projectId) {
+      id
+      title
+      task(id: $taskId) {
+        id
+        title
+        description
+        assignee {
+          name
+        }
+        toBeFinishedAt
+        state
+      }
+    }
+  }
+`;
 
 // ÜBUNG 2 -------------------------------------------------------------------------------
 //
@@ -43,7 +64,14 @@ const TASK_QUERY = null; // gql` HIER DEIN QUERY REIN`;
 // Auch hier die Empfehlung, die Mutation zunächst im Playground zusammenzubauen
 // und dort auszuprobieren
 // Nach dem Einfügen werden die TypeScript Definitionen dazu automatisch generiert
-const UPDATE_TASK_STATE_MUTATION = null; // gql` HIER DEINE MUTATION REIN`;
+const UPDATE_TASK_STATE_MUTATION = gql`
+  mutation UpdateTaskStateMutation($taskId: ID!, $newState: TaskState!) {
+    updateTaskState(taskId: $taskId, newState: $newState) {
+      id
+      state
+    }
+  }
+`;
 
 type TaskPageProps = RouteComponentProps<{ projectId: string; taskId: string }>;
 export default function TaskPage(props: TaskPageProps) {
@@ -63,13 +91,17 @@ export default function TaskPage(props: TaskPageProps) {
   // Tip: Verwende den 'useQuery'-Hook (nicht die Query-Komponente).
   //      Denk dran, dass die TypeScript Definitionen generiert werden (s.o. TODO 1)
   //      const { loading, error, data} = useQuery<???, ???>(...);
+  const { loading, error, data } = useQuery<TaskPageQuery, TaskPageQueryVariables>(TASK_QUERY, {
+    variables: { projectId, taskId }
+  });
 
   // ÜBUNG 2, TODO 2: ---------------------------------------------------
   // Hier soll die Mutation definiert werden ('useMutation'). Die zurückgelieferte
   // Funktion zum AUSFÜHREN der Mutation musst Du in einer Konstante ablegen,
   // damit Du in changeTaskState beim AUSFÜHREN daraufzugreifen kannst (s.u. TODO 3)
+  const [runChangeTaskState] = useMutation<UpdateTaskStateMutation, UpdateTaskStateMutationVariables>(UPDATE_TASK_STATE_MUTATION);
 
-  function changeTaskState(task: any, newState: any) {
+  function changeTaskState(task: TaskPageQuery_project_task, newState: TaskState) {
     // ÜBUNG 2, TODO 3: ---------------------------
     // Hier soll die Mutation zum Aktualisieren des Tasks AUSGEFÜHRT werden.
     // Die Methode wird aufgerufen, wenn der Benutzer auf einen Button klickt (Start, Finish)
@@ -81,6 +113,12 @@ export default function TaskPage(props: TaskPageProps) {
     //
     // - Bonus: Pass' die Funktionssignatur von 'changeTaskState' an. Ersetze 'any' durch
     //   die jeweils korrekten, generierten, TypeScript Typen.
+    runChangeTaskState({
+      variables: {
+        taskId: task.id,
+        newState
+      }
+    });
   }
 
   // ÜBUNG 1, TODO 3:
@@ -93,6 +131,20 @@ export default function TaskPage(props: TaskPageProps) {
   //
   //  - Wenn die Daten erfolgreich geladen worden sind, sollen die Daten an die TaskView-
   //    Komponente übergeben weden. (s.u. TODO 4)
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+  if (error || !data) {
+    return <h2>Sorry... Something failed while loading data </h2>;
+  }
+
+  if (!data.project) {
+    return <h2>Project not found!</h2>;
+  }
+
+  if (!data.project.task) {
+    return <h2>Task not found!</h2>;
+  }
 
   return (
     <div className={styles.TaskPage}>
@@ -108,6 +160,8 @@ export default function TaskPage(props: TaskPageProps) {
         //
         // Achtung! Die beiden Komponenten HINTER die folgende Zeile mit dem '}' schreiben!
       }
+      <TaskPageHeader project={data.project} />
+      <TaskView task={data.project.task} onTaskStateChange={changeTaskState} />
     </div>
   );
 }
