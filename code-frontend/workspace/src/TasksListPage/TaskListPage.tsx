@@ -11,30 +11,38 @@ import { mapTaskState } from "../util/mapper";
 import { useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 
+const TASK_FRAGMENT = gql`
+  fragment TaskFragment on Task {
+    id
+    title
+    assignee {
+      name
+    }
+    state
+  }
+`;
+
 const TASK_LIST_PAGE_QUERY = gql`
   query TaskListPageQuery($projectId: ID!) {
     project(id: $projectId) {
       title
       id
       tasks {
-        id
-        title
-        assignee {
-          name
-        }
-        state
+        ...TaskFragment
       }
     }
   }
+
+  ${TASK_FRAGMENT}
 `;
 
-const TASK_CHANGE_SUBSCRIPTION = gql`
-  subscription TaskChangeSubscription($projectId: ID!) {
-    onTaskChange(projectId: $projectId) {
-      id
-      state
+const NEW_TASK_SUBSCRIPTION = gql`
+  subscription NewTaskSubscription($projectId: ID!) {
+    newTask: onNewTask(projectId: $projectId) {
+      ...TaskFragment
     }
   }
+  ${TASK_FRAGMENT}
 `;
 
 type TasksPageTableProps = {
@@ -89,8 +97,25 @@ export default function TaskListPage(props: TaskListPageProps) {
   React.useEffect(() => {
     if (subscribeToMore && projectId) {
       return subscribeToMore({
-        document: TASK_CHANGE_SUBSCRIPTION,
-        variables: { projectId }
+        document: NEW_TASK_SUBSCRIPTION,
+        variables: { projectId },
+        updateQuery: (prev, { subscriptionData }) => {
+          // prev is last entry that has been read by our Query
+          // (TaskListPageQuery), i.e a Project with its Tasks
+          if (!prev.project) {
+            return prev;
+          }
+
+          // unfortunately wrong TS definition here
+          // @ts-ignore
+          const newTask = subscriptionData.data.newTask as TaskListPageQuery_project_tasks;
+          return {
+            project: {
+              ...prev.project,
+              tasks: [...prev.project.tasks, newTask]
+            }
+          };
+        }
       });
     }
   }, [projectId, subscribeToMore]);

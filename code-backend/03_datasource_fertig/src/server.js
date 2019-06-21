@@ -1,8 +1,8 @@
 const { ApolloServer, PubSub } = require("apollo-server");
 
 const typeDefs = require("./schema");
-const UserRESTDataSource = require("./datasources/UserRESTDataSource");
 const ProjectDataSource = require("./datasources/ProjectSQLiteDataSource");
+const UserRESTDataSource = require("./datasources/UserRESTDataSource");
 
 const pubsub = new PubSub();
 
@@ -14,25 +14,54 @@ const resolvers = {
   Task: require("./resolvers/task")
 };
 
+const buildDataSources = () => ({
+  projectDatasource: new ProjectDataSource(),
+  userDataSource: new UserRESTDataSource()
+});
+
+const dataSourcesForSubscription = connection => {
+  // In WebSocket Requests for Subscription,
+  // the DataSources are not set :-(
+  // So we have to workaround here and initialize and set them manually
+  // see: https://github.com/apollographql/apollo-server/issues/1526#issuecomment-503285841
+
+  const dataSources = buildDataSources();
+  Object.values(dataSources)
+    .filter(ds => typeof ds.initialize === "function")
+    .forEach(ds =>
+      ds.initialize({ context: connection.context, cache: undefined })
+    );
+
+  return dataSources;
+};
+
+const buildContext = ({ _req, connection }) =>
+  connection
+    ? {
+        dataSources: dataSourcesForSubscription(connection),
+        pubsub
+      }
+    : { pubsub };
+
 const server = new ApolloServer({
   typeDefs,
 
   resolvers,
 
-  context: () => ({
-    pubsub
-  }),
+  context: buildContext,
 
-  dataSources: () => ({
-    projectDatasource: new ProjectDataSource(),
-    userDataSource: new UserRESTDataSource()
-  }),
+  dataSources: buildDataSources,
+
+  formatError: err => {
+    console.error(err.originalError || err);
+    return err;
+  },
 
   playground: {
     // Playground runs at http://localhost:4000
     settings: {
       "editor.theme": "light",
-      "schema.polling.enable": false
+      "schema.polling.enable": true
     }
   }
 });

@@ -5,9 +5,14 @@ module.exports = {
     resolve(payload) {
       return payload.newTask;
     },
-    subscribe: (_s, _a, { pubsub }) => {
-      return pubsub.asyncIterator("NewTaskEvent");
-    }
+    subscribe: withFilter(
+      (_s, _a, { pubsub }) => pubsub.asyncIterator("NewTaskEvent"),
+      (payload, variables) => {
+        return variables.projectId
+          ? variables.projectId === payload.newTask._projectId
+          : true;
+      }
+    )
   },
   onTaskChange: {
     resolve(payload) {

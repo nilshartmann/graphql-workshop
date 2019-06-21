@@ -31,8 +31,8 @@ function taskFromRow(row, prefix = "") {
     description: row[`${prefix}description`],
     state: TASK_STATES[row[`${prefix}state`]],
     toBeFinishedAt: toIsoString(row[`${prefix}finish_date`]),
-    _assigneeId: row[`${prefix}assignee_id`],
-    _projectId: row[`${prefix}project_id`]
+    _assigneeId: row[`${prefix}assignee_id`].toString(),
+    _projectId: row[`${prefix}project_id`].toString()
   };
 
   return task;

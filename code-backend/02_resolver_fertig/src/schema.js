@@ -154,7 +154,7 @@ module.exports = `
   }
 
   type Subscription {
-    onNewTask: Task!
+    onNewTask(projectId: ID): Task!
     onTaskChange(projectId: ID): Task!
   }
 `;
