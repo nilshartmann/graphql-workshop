@@ -21,7 +21,7 @@
     "sqlite3": "^4.0.9"
   },
   "scripts": {
-    "start": "nodemon --inspect src/server.js",
+    "start": "rm -f ../db.sqlite && nodemon --inspect src/server.js",
     "eslint": "eslint src/**"
   }
 }
