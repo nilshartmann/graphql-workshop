@@ -1,0 +1,13 @@
+{
+  "name": "graphql-workshop",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "setup": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd code-backend && npm install",
+    "install:frontend": "cd code-frontend/workspace && npm install"
+  },
+  "keywords": [],
+  "author": "Nils Hartmann",
+  "license": "ISC"
+}
